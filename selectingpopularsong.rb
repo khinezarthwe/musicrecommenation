@@ -5,7 +5,7 @@ require 'rubygems'
 require 'csv'
 result_hash = {}
 count = 0
-data = CSV.read('data/data/merging/user_000100.csv',headers: true)
+data = CSV.read('data/data/merging/101.csv',headers: true)
 song_id = data.headers
 song_id.each do |col_name|
 	result_hash[col_name] = data[col_name].compact.count

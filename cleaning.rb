@@ -7,6 +7,7 @@ require 'bundler/setup'
 require 'whatlanguage'
 require_relative 'userprofile'
 require 'csv'
+#module 
 dataclean = []
 w1 = WhatLanguage.new(:all)
 testdate = DateTime.parse "2008-12-31T24:00:00Z"

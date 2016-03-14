@@ -25,13 +25,22 @@ def self.csv_to_hash_array(csv)
   end
 end
 
-
 intial_data = CSV.read('data/data/counting/user_000001.csv', headers: true)
 count = 2
 
-Dir.foreach('data/data/counting/') do |filename|
+Dir.foreach('data/data/counting/').sort.each do |filename|
   next if filename == '.' or filename == '..' or filename == 'user_00001.csv'
+  p filename
   currentdata = CSV.read('data/data/counting/'+ filename, headers: true)
+  if currentdata.size == 0 then
+    headers = intial_data.headers
+    body    = headers.map {|h| nil }
+    CSV.open('data/data/counting/' + filename, "w") do|csvobject|
+      csvobject << headers
+      csvobject << body
+    end
+    currentdata = CSV.read('data/data/counting/'+ filename, headers: true)
+  end
   mastercsv = merge(intial_data,currentdata)
   mastercsv_arr = CSV.parse(mastercsv)
   CSV.open("data/data/merging/"+ count.to_s + '.csv',"w") do |csvobject|
@@ -43,4 +52,3 @@ Dir.foreach('data/data/counting/') do |filename|
   intial_data = CSV.read('data/data/merging/'+ count.to_s + '.csv', headers: true)
   count += 1
 end
-

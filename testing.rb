@@ -1,48 +1,55 @@
-
-#<<<<<< countring.rb ...........  selectingpopularsong.rb>>>>>
-# merging all the file the first result to merging folder and add again with 
-#counting folder 
-# by doing this I can get the user listeing metrix for all data
+#<< seperateuser.rb ........>>> creatingmatrix.rb
+#OK! counting the listening count for each song from this result we can construct the 
+# user song matrix with the weight listenting frequency.
 require 'rubygems'
-require 'bundler/setup'
 require 'csv'
 
-def self.merge(csv_1,csv_2)
-  headers = (csv_1.headers + csv_2.headers).uniq.sort
+module Music
+  module Counting
 
-  hash_array = [csv_1, csv_2].flat_map &method(:csv_to_hash_array)
+    SONG_NAME_INDEX = 4
+  ##   [[dc, dc, dc, main],[dc, dc, dc, main],[dc, dc, dc, main]]
+    def self.process_data data
+      result_hash = {}
+      data.each do|record|
+        next if record[SONG_NAME_INDEX].nil?
+        if result_hash[record[SONG_NAME_INDEX]].nil?
+          result_hash[record[SONG_NAME_INDEX]] = 1
+        else
+          result_hash[record[SONG_NAME_INDEX]] += 1
+        end
+      end
+      result_hash
+    end
 
-  CSV.generate do |merged_csv|
-    merged_csv << headers
+    def self.output result
+      CSV.open("data/data/counting/" + user_name + '.csv',"w") do |csvobject|
+        result = result.to_a.transpose
+        result.each do |row_arr|
+          csvobject << row_arr
+        end
+      end
+    end
 
-    hash_array.each do |row|
-      merged_csv << row.values_at(*headers)
+    def self.main
+      Dir.foreach('data/data/seperateuser/') do |user_name|
+        next if user_name == '.' or user_name == '..'
+        input   = CSV.read('data/data/seperateuser/' + user_name, col_sep: ",")
+        result = process_data input
+        output result
+      end
     end
   end
 end
-def self.csv_to_hash_array(csv)
-  csv.to_a[1..-1].map do |row|
-    Hash[csv.headers.zip(row)]
+Music::Counting.main
+
+require 'minitest/autorun'
+
+
+describe Music::Counting do
+  it "increases count if 4th value of record is present" do
+    ary = [['dc', 'dc', 'dc','dc', 'main'],['dc', 'dc', 'dc','dc', nil],['dc','dc', 'dc', 'dc', 'main']]
+    result = Music::Counting.process_data ary
+    result.must_equal({'main' => 2})
   end
-end
-intial_data = CSV.read('data/data/counting/user_000001.csv', headers: true)
-count = 2
-allfilename = []
-Dir.foreach('data/data/counting/') do |filename|
- allfilename << filename
-end 
-p allfilename.sort
-Dir.foreach('data/data/counting/') do |filename|
-  next if filename == '.' or filename == '..' or filename == 'user_00001.csv'
-  currentdata = CSV.read('data/data/counting/'+ filename, headers: true)
-  mastercsv = merge(intial_data,currentdata)
-  mastercsv_arr = CSV.parse(mastercsv)
-  CSV.open("data/data/merging/"+ count.to_s + '.csv',"w") do |csvobject|
-    mastercsv_arr.each do |row_arr|
-      csvobject << row_arr
-    end
-    
-  end
-  intial_data = CSV.read('data/data/merging/'+ count.to_s + '.csv', headers: true)
-  count += 1
 end

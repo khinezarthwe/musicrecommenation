@@ -1,3 +1,4 @@
+
 require 'rubygems'
 require 'bundler/setup'
 
@@ -31,10 +32,6 @@ class TestMeme < Minitest::Test
 	@lda.print_topics(5)
 
 	mat1 = @lda.compute_topic_document_probability
-
-
-
-
     mat1.to_a.each {|r| puts r.inspect}
     
 
