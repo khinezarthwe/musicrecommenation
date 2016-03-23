@@ -29,3 +29,12 @@ def rawdata
   end
   return totaldata
 end
+
+def smallrawdata
+   smallrawdata = CSV.read('data/data/rawdata/allrawdata.csv', col_sep: ",")
+   return smallrawdata
+end
+
+def countingdata
+  
+end

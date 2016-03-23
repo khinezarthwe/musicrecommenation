@@ -1,55 +1,90 @@
-#<< seperateuser.rb ........>>> creatingmatrix.rb
-#OK! counting the listening count for each song from this result we can construct the 
-# user song matrix with the weight listenting frequency.
+##<< dataforlyricsearch.rb .......................lyricdatawithlda.rb------------>>
+# searching lyrics and based on research clean remove short file and
+# differnt languages.
 require 'rubygems'
+require 'bundler/setup'
 require 'csv'
-
+require 'lyricfy'
+require 'whatlanguage'
 module Music
-  module Counting
-
-    SONG_NAME_INDEX = 4
-  ##   [[dc, dc, dc, main],[dc, dc, dc, main],[dc, dc, dc, main]]
-    def self.process_data data
-      result_hash = {}
-      data.each do|record|
-        next if record[SONG_NAME_INDEX].nil?
-        if result_hash[record[SONG_NAME_INDEX]].nil?
-          result_hash[record[SONG_NAME_INDEX]] = 1
-        else
-          result_hash[record[SONG_NAME_INDEX]] += 1
-        end
-      end
-      result_hash
+  module Searchinglyric
+    SONGID_INDEX = 0
+    ARTIST_INDEX = 1
+    SONGNAME_INDEX = 2
+    def self.input
+      data = CSV.read('data/data/songname_artistname.csv')
     end
+    def self.output
 
-    def self.output result
-      CSV.open("data/data/counting/" + user_name + '.csv',"w") do |csvobject|
-        result = result.to_a.transpose
-        result.each do |row_arr|
-          csvobject << row_arr
+    end
+    def self.searchlyric data
+      fetcher = Lyricfy::Fetcher.new
+      data.each do |songdata|
+        begin
+          song = fetcher.search songdata[ARTIST_INDEX],songdata[SONGNAME_INDEX]
+          File.open('data/data/testing/'+songdata[SONGID_INDEX]+ '.txt', 'w') {|f| f.write(song.body('')) }
+        rescue Exception => e
+          File.open('data/data/testing/'+songdata[SONGID_INDEX]+ '.txt', 'w') {|f| f.write(e.message) }
         end
       end
     end
+    def self.cleaning
+      Dir.foreach('data/data/testing/') do |filename|
+        next if filename == '.' or filename == '..'
+        file =  File.read('data/data/testing/' + filename)
+        if file.length < 500
+          File.delete('data/data/testing/' + filename)
+        end
+      end
 
+      #cleaning other songs
+      w1 = WhatLanguage.new(:all)
+      Dir.foreach('data/data/testing/') do |filename|
+        next if filename == '.' or filename == '..'
+        file =  File.read('data/data/testing/' + filename)
+        if w1.language(file).to_s != 'english'
+          File.delete('data/data/testing/' + filename)
+        end
+      end
+    end
     def self.main
-      Dir.foreach('data/data/seperateuser/') do |user_name|
-        next if user_name == '.' or user_name == '..'
-        input   = CSV.read('data/data/seperateuser/' + user_name, col_sep: ",")
-        result = process_data input
-        output result
-      end
+      searchlyric input
+      cleaning
     end
   end
 end
-Music::Counting.main
+#
 
-require 'minitest/autorun'
+=begin
+  
 
 
-describe Music::Counting do
-  it "increases count if 4th value of record is present" do
-    ary = [['dc', 'dc', 'dc','dc', 'main'],['dc', 'dc', 'dc','dc', nil],['dc','dc', 'dc', 'dc', 'main']]
-    result = Music::Counting.process_data ary
-    result.must_equal({'main' => 2})
+data = CSV.read('data/data/songname_artistname.csv')
+fetcher = Lyricfy::Fetcher.new
+data.each do |songdata|
+  begin
+    song = fetcher.search songdata[1],songdata[2]
+    File.open('data/data/lyricdata/'+songdata[0]+ '.txt', 'w') {|f| f.write(song.body('')) }
+  rescue Exception => e
+    File.open('data/data/lyricdata/nolyric/'+songdata[0]+ '.txt', 'w') {|f| f.write(e.message) }
   end
 end
+
+Dir.foreach('data/lyricdata/') do |filename|
+  next if filename == '.' or filename == '..'
+  file =  File.read('data/lyricdata/' + filename)
+  if file.length < 500
+    File.delete('data/lyricdata/' + filename)
+  end
+end
+
+#cleaning other songs
+w1 = WhatLanguage.new(:all)
+Dir.foreach('data/lyricdata/') do |filename|
+  next if filename == '.' or filename == '..'
+  file =  File.read('data/lyricdata/' + filename)
+  if w1.language(file).to_s != 'english'
+    File.delete('data/lyricdata/' + filename)
+  end
+end
+=end
