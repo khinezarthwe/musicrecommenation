@@ -1,4 +1,5 @@
-##<< dataforlyricsearch.rb .......................lyricdatawithlda.rb------------>>
+##<< dataforlyricsearch.rb .......................user_song_matrix.rb------------>>
+
 # searching lyrics and based on research clean remove short file and
 # differnt languages.
 require 'rubygems'

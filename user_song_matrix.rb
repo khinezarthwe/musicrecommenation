@@ -1,3 +1,8 @@
+##<< searchinglyric.rb ........................
+# for the nextstep, I want to calculate the pearson corrleation between these user 
+# I user 'pearson' ruby gem so I change all these .csv file to .json file and calculate 
+# pearson correlation so next file is .....csvtojson.rb>>>>>>
+
 ### after searching the lyric for each songs of popular songs we recreate the user_song 
 ### matrix for calculating the correlation and recommendation for users
 ### this matrix is for final user_item matrix 

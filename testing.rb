@@ -1,90 +1,45 @@
-##<< dataforlyricsearch.rb .......................lyricdatawithlda.rb------------>>
-# searching lyrics and based on research clean remove short file and
-# differnt languages.
-require 'rubygems'
-require 'bundler/setup'
+require 'json'
+require 'pearson'
 require 'csv'
-require 'lyricfy'
-require 'whatlanguage'
+require_relative 'userprofile.rb'
+
 module Music
-  module Searchinglyric
-    SONGID_INDEX = 0
-    ARTIST_INDEX = 1
-    SONGNAME_INDEX = 2
-    def self.input
-      data = CSV.read('data/data/songname_artistname.csv')
+  module Pearsoncorrelation_1
+    def self.main
+      data = File.read("data/data/user_song_matrix.json")
+      pearsoncorrelation_1 data
+      output
+    end
+    def self.pearsoncorrelation_1 data
+      usersimilarity = {}
+      user_arr.each do |user_data|
+        usersimilarity[user_data] = Pearson.closest_entities(JSON.parse(data),user_data,limit:20)
+      end
     end
     def self.output
-
-    end
-    def self.searchlyric data
-      fetcher = Lyricfy::Fetcher.new
-      data.each do |songdata|
-        begin
-          song = fetcher.search songdata[ARTIST_INDEX],songdata[SONGNAME_INDEX]
-          File.open('data/data/testing/'+songdata[SONGID_INDEX]+ '.txt', 'w') {|f| f.write(song.body('')) }
-        rescue Exception => e
-          File.open('data/data/testing/'+songdata[SONGID_INDEX]+ '.txt', 'w') {|f| f.write(e.message) }
+      CSV.open("similarity.csv" ,"w") do |csvobject|
+        usersimilarity.values.each do |row_arr|
+          csvobject << row_arr
         end
       end
-    end
-    def self.cleaning
-      Dir.foreach('data/data/testing/') do |filename|
-        next if filename == '.' or filename == '..'
-        file =  File.read('data/data/testing/' + filename)
-        if file.length < 500
-          File.delete('data/data/testing/' + filename)
-        end
-      end
-
-      #cleaning other songs
-      w1 = WhatLanguage.new(:all)
-      Dir.foreach('data/data/testing/') do |filename|
-        next if filename == '.' or filename == '..'
-        file =  File.read('data/data/testing/' + filename)
-        if w1.language(file).to_s != 'english'
-          File.delete('data/data/testing/' + filename)
-        end
-      end
-    end
-    def self.main
-      searchlyric input
-      cleaning
     end
   end
 end
-#
 
 =begin
-  
 
-
-data = CSV.read('data/data/songname_artistname.csv')
-fetcher = Lyricfy::Fetcher.new
-data.each do |songdata|
-  begin
-    song = fetcher.search songdata[1],songdata[2]
-    File.open('data/data/lyricdata/'+songdata[0]+ '.txt', 'w') {|f| f.write(song.body('')) }
-  rescue Exception => e
-    File.open('data/data/lyricdata/nolyric/'+songdata[0]+ '.txt', 'w') {|f| f.write(e.message) }
-  end
+usersimilarity = {}
+data = File.read("hashoutput.json")
+user_arr.each do |user_data|
+  usersimilarity[user_data] = Pearson.closest_entities(JSON.parse(data),user_data,limit:20)
 end
 
-Dir.foreach('data/lyricdata/') do |filename|
-  next if filename == '.' or filename == '..'
-  file =  File.read('data/lyricdata/' + filename)
-  if file.length < 500
-    File.delete('data/lyricdata/' + filename)
-  end
-end
 
-#cleaning other songs
-w1 = WhatLanguage.new(:all)
-Dir.foreach('data/lyricdata/') do |filename|
-  next if filename == '.' or filename == '..'
-  file =  File.read('data/lyricdata/' + filename)
-  if w1.language(file).to_s != 'english'
-    File.delete('data/lyricdata/' + filename)
+#p usersimilarity['user_3'][1][1]
+CSV.open("similarity.csv" ,"w") do |csvobject|
+  usersimilarity.values.each do |row_arr|
+    csvobject << row_arr
   end
 end
+#File.open('similarity.json','w') {|file| file.write(usersimilarity.to_json)}
 =end
