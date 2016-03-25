@@ -2,6 +2,8 @@ require 'minitest/autorun'
 require_relative '/home/kzt/Documents/Project_2/music_erecommendation_v_2/counting.rb'
 require_relative '/home/kzt/Documents/Project_2/music_erecommendation_v_2/cleaning.rb'
 require_relative '/home/kzt/Documents/Project_2/music_erecommendation_v_2/seprateuser.rb'
+require_relative '/home/kzt/Documents/Project_2/music_erecommendation_v_2/pearsoncorrelation_1.rb'
+
 
 
 describe Music::Counting do
@@ -48,7 +50,7 @@ describe Music::Seperating do
   it "Seperating each user for each data record" do
     tempdata = []
     user_arr = ['user_01','user_02']
-    smallrawdata = [['user_01', 'dc', 'dc','dc', 'main'],*
+    smallrawdata = [['user_01', 'dc', 'dc','dc', 'main'],
                     ['user_01', 'dc', 'dc','dc', nil],
                     ['user_02','dc', 'dc', 'dc', 'main'],
                     ['user_02','dc', 'dc', 'dc', 'main']]
@@ -58,3 +60,12 @@ describe Music::Seperating do
   end
 end
 
+describe Music::Pearsoncorrelation_1 do
+  it "calculating the pearson correlation between each user using ruby gem 'pearson'" do
+    data = File.read("data/data/testing/correlation.json")
+    user_arr = ['user_000001','user_000002']
+    #NUMBER_OF_USER = user_arr.count + 1
+    result = Music::Pearsoncorrelation_1.pearsoncorrelation_1(data,user_arr)
+    result.must_equal('1')
+  end
+end
