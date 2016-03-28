@@ -1,3 +1,6 @@
+#<<<<<< user_song_matrix.rb   ..pearsoncorrelation_1.rb................>>>>>>>>
+# calculate the pearson correlation between the users 100 using pearson ruby gem
+
 require 'bundler/setup'
 require 'json'
 require 'pearson'
@@ -6,14 +9,13 @@ require_relative 'userprofile.rb'
 
 module Music
   module Pearsoncorrelation_1
-    NUMBER_OF_USER = user_arr.count + 1
     def self.main
       jsonfile = File.read("data/data/user_song_matrix.json")
       data = JSON.parse(jsonfile)
-      usersimilarity = pearsoncorrelation_1(data,user_arr)
+      usersimilarity = pearsoncorrelation_1(data)
       output usersimilarity
     end
-    def self.pearsoncorrelation_1 (data,user_arr)
+    def self.pearsoncorrelation_1 (data)
       pearsoncorrleation = []
       result_hash = {}
       user_arr.each do |row|
@@ -25,9 +27,9 @@ module Music
       end
       result_hash
     end
-    def self.output usersimilarity
+    def self.output result_hash
       CSV.open("data/data/pearsoncorrelation_1.csv" ,"w") do |csvobject|
-        usersimilarity.each do |row_arr|
+        result_hash.each do |row_arr|
           csvobject << row_arr
         end
       end

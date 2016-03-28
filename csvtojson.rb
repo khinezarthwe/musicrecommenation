@@ -31,7 +31,7 @@ module Music
       hashdata = {}
       data = File.read('data/data/rawdata/rawjsondata.json')
       jdata = JSON.parse data
-      for i in 0..user_arr.length-1
+      for i in 0..user_arr.length
         hashdata[user_arr[i]] = jdata[i]
       end
       File.open('data/data/user_song_matrix.json','w') {|file| file.write(hashdata.to_json)}

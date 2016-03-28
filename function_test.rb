@@ -62,10 +62,22 @@ end
 
 describe Music::Pearsoncorrelation_1 do
   it "calculating the pearson correlation between each user using ruby gem 'pearson'" do
-    data = File.read("data/data/testing/correlation.json")
+    data =    {
+      "user_000001"=> {
+        "00042d36-1f4b-41ac-bf9d-a18c741507ca"=> 2.5,
+        "00048f58-c10d-4dbe-a04f-e5b88a86ff61"=> 3,
+        "000958d7-a81b-4a70-ac29-c667cf3d50c0"=> 12
+      },
+      "user_000002"=> {
+        "00042d36-1f4b-41ac-bf9d-a18c741507ca"=> 5.6,
+        "00048f58-c10d-4dbe-a04f-e5b88a86ff61"=> 3.7,
+        "000958d7-a81b-4a70-ac29-c667cf3d50c0"=> 4.8
+      }
+    }
     user_arr = ['user_000001','user_000002']
     #NUMBER_OF_USER = user_arr.count + 1
     result = Music::Pearsoncorrelation_1.pearsoncorrelation_1(data,user_arr)
-    result.must_equal('1')
+    result.must_equal({"user_000001"=>[1.0, 0.044116940334052196], "user_000002"=>[0.044116940334052196, 1.0]}
+)
   end
 end
