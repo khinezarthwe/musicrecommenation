@@ -3,6 +3,7 @@ require_relative '/home/kzt/Documents/Project_2/music_erecommendation_v_2/counti
 require_relative '/home/kzt/Documents/Project_2/music_erecommendation_v_2/cleaning.rb'
 require_relative '/home/kzt/Documents/Project_2/music_erecommendation_v_2/seprateuser.rb'
 require_relative '/home/kzt/Documents/Project_2/music_erecommendation_v_2/pearsoncorrelation_1.rb'
+require_relative '/home/kzt/Documents/Project_2/music_erecommendation_v_2/textpreparinglyric.rb'
 
 
 
@@ -79,5 +80,13 @@ describe Music::Pearsoncorrelation_1 do
     result = Music::Pearsoncorrelation_1.pearsoncorrelation_1(data,user_arr)
     result.must_equal({"user_000001"=>[1.0, 0.044116940334052196], "user_000002"=>[0.044116940334052196, 1.0]}
 )
+  end
+end
+
+describe Music::Textpreparinglyric do
+  it "Correcting text for some work" do
+    text = "I am onThe wayOf whereAreYou"
+    result = Music::Textpreparinglyric.process text
+    result.must_equal(["I", "am", "on", "The", "way", "Of", "where", "Are", "You"])
   end
 end

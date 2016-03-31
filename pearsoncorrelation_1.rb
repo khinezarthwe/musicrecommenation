@@ -1,4 +1,4 @@
-#<<<<<< user_song_matrix.rb   ..pearsoncorrelation_1.rb................>>>>>>>>
+#<<<<<< user_song_matrix.rb   ..pearsoncorrelation_1.rb......textpreparinglyric.rb..........>>>>>>>>
 # calculate the pearson correlation between the users 100 using pearson ruby gem
 
 require 'bundler/setup'
@@ -36,7 +36,7 @@ module Music
     end
   end
 end
-Music::Pearsoncorrelation_1.main
+#Music::Pearsoncorrelation_1.main
 =begin
 
 usersimilarity = {}
