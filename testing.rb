@@ -1,27 +1,50 @@
-file =  File.read('data/data/lyricdata/00042d36-1f4b-41ac-bf9d-a18c741507ca.txt')
-#text = "timeI've wasted such a long timeBeen"
-text_arr = file.split
+require 'csv'
+require 'rubygems'
+require 'bundler/setup'
+require 'lda-ruby'
+songlist = []
+stop_word_list = ['big']
+Dir.foreach('data/data/testing/') do |filename|
+  next if filename == '.' or filename == '..'
+  songlist << filename.chomp('.txt')
+end
+corpus = Lda::Corpus.new
+Dir.foreach('data/data/testing/') do |song_name|
+  next if song_name == '.' or song_name == '..'
+  file = File.open('data/data/testing/'+ song_name, "r")
 
-word_list = []
-text_arr.each do |word|
-  test_ans = word.split /(?=[A-Z])/
-	word_list += test_ans 
+  songlyric = file.read
+  songlyric = songlyric.delete(stop_word_list.to_s)
+  songdata = Lda::TextDocument.new(corpus,songlyric)
+  #p songdata
+  corpus.add_document(songdata)
 end
 
-#p word_list
 
-#p word_list.join(" ")
+lda = Lda::Lda.new(corpus)
+lda.num_topics = 8
+lda.em('random')
+topics = lda.top_words(10)
+#lda.print_topics(10)
 
-File.open('data/data/testing/'+'a.txt', 'w') {|f| f.write(word_list.join(" "))}
-
-
-
-
-
+mat1 = lda.compute_topic_document_probability
+#mat1.to_a.each {|r| puts r.inspect}
+CSV.open("data/data/testing/result" ,"w") do |csvobject|
+  mat1.to_a.each do |r|
+    csvobject << r
+  end
+end
 
 
 
 =begin
+
+
+
+
+
+
+
 require 'lda-ruby'
 corpus = Lda::Corpus.new
 document1 = Lda::TextDocument.new(corpus, '')
