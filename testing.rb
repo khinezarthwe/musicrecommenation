@@ -3,30 +3,30 @@ require 'rubygems'
 require 'bundler/setup'
 require 'lda-ruby'
 songlist = []
-stop_word_list = ['me']
-Dir.foreach('data/data/testing/') do |filename|
+stop_word_list = ['ooh','ll','don','ve','na','ya','uh','ah','la','ain','d','na','ha','da','em',
+                  'ba','na']
+Dir.foreach('data/data/lyricdata/') do |filename|
   next if filename == '.' or filename == '..'
   songlist << filename.chomp('.txt')
 end
 corpus = Lda::Corpus.new
-Dir.foreach('data/data/testing/') do |song_name|
+Dir.foreach('data/data/lyricdata/') do |song_name|
   next if song_name == '.' or song_name == '..'
-  file = File.open('data/data/testing/'+ song_name, "r")
+  file = File.open('data/data/lyricdata/'+ song_name, "r")
   #words = @string1.split(/\W+/)
   songlyric = file.read
   songlyric = songlyric.split(/\W+/)
-  songlyric = songlyric-stop_word_list
+  songlyric = songlyric - stop_word_list
   #songlyric = songlyric.split.delete_if{|x| stopword.include?(x)}.join(' ')
   # songlyric = songlyric.delete(stop_word_list.to_s)
   songdata = Lda::TextDocument.new(corpus,songlyric.to_s)
-  p songlyric
   #p songdata
   corpus.add_document(songdata)
 end
 
 
 lda = Lda::Lda.new(corpus)
-lda.num_topics = 5
+lda.num_topics = 30
 lda.em('random')
 #topics = lda.top_words(20)
 lda.print_topics(20)
