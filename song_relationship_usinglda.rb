@@ -1,4 +1,4 @@
-#<<<<<<<<<<<<<<<textpreparinglyric.rb ----------------------------------
+#<<<<<<<<<<<<<<<textpreparinglyric.rb ---------------------------------songwithgruop_10topic.rb>>>>>>>>
 #this file for calculating song relationship between each songs and each songs using LDA
 # for these file I can get the log probabiliy of each topic upon song
 # Form this file result , I got goups of each song latent structure for each topic.
